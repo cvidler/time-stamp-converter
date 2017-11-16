@@ -1,0 +1,53 @@
+<html>
+<head>
+<meta charset="UTF-8"> 
+<title>DC RUM Time Stamp Converter</title>
+<script>
+// code to extract timestamp from the input text, convert from hex-epoch to UTC and specified timezone output
+"use strict"
+function dehex(hextext) {
+	// convert hex string to a number
+	return parseInt(hextext, 16);
+}
+
+function epoch(ts) {
+	// convert epoch timestamp to time object
+	return new Date(((ts) * 1000));
+}
+
+function extractts(text) {
+	// find a 8 character hex string in the input, and return just that
+	return /([0-9A-Fa-f]{8})/.exec(text);
+}
+
+function updatets(inputtext, timezone, outputdiv) {
+	// event handler to convert string to output
+	
+	console.log("inputtext: " + inputtext + " timezone: " + timezone + " outputdiv: " + outputdiv);
+	
+	var extractedtext;
+	extractedtext = extractts(inputtext);
+	if (extractedtext == "") { document.getElementById(outputdiv).innerHTML = ""; return; }
+
+	var converteddate;
+	converteddate = epoch(dehex(extractedtext),timezone)
+	document.getElementById(outputdiv).innerHTML = extractedtext + "<br/>" + dehex(extractedtext) + "<br/>" + converteddate.toUTCString() + "<br/>" + converteddate.toLocaleString();
+
+}
+
+</script>
+</head>
+<body>
+<h1>DC RUM Time Stamp Converter</h1>
+<noscript>Sorry, your browser does not support JavaScript!</noscript>
+<form>
+<input type="text" name="input" onkeyup="javascript:updatets(input.value,tz.value,'output');"/>
+<select name="tz" onchange="javascript:updatets(input.value,tz.value,'output');">
+  <option value="0">UTC +0</option>
+  <option value="10">AEST +10</option>
+  <option value="11">AEDT +11</option>
+</select>
+<div id="output"></div>
+</form>
+</body>
+</html>
